@@ -18,9 +18,17 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@workspace/db": "workspace:*"
+    "@langchain/ollama": "^1.2.6",
+    "@langchain/textsplitters": "^1.0.1",
+    "@workspace/db": "workspace:*",
+    "cheerio": "^1.2.0",
+    "openai": "^6.32.0",
+    "pdf-parse": "^2.4.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/pdf-parse": "^1.1.5",
+    "tsx": "^4.21.0",
     "typescript": "^5.5.4"
   }
 }

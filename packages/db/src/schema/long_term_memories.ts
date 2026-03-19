@@ -10,7 +10,7 @@ export const longTermMemories = pgTable(
       .notNull()
       .references(() => workspaces.id, { onDelete: 'cascade' }),
     content: text('content').notNull(),
-    embedding: vector('embedding', { dimensions: 1536 }),
+    embedding: vector('embedding', { dimensions: 768 }),
     importanceScore: real('importance_score').default(0.5).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },

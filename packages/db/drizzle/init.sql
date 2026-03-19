@@ -33,7 +33,7 @@ CREATE TABLE chunks (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   document_id  UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
   content      TEXT NOT NULL,
-  embedding    vector(1536),
+  embedding    vector(768),
   chunk_index  INTEGER NOT NULL,
   metadata     JSONB DEFAULT '{}' NOT NULL,
   created_at   TIMESTAMPTZ DEFAULT NOW() NOT NULL
@@ -58,7 +58,7 @@ CREATE TABLE long_term_memories (
   id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id     UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   content          TEXT NOT NULL,
-  embedding        vector(1536),
+  embedding        vector(768),
   importance_score REAL DEFAULT 0.5 NOT NULL,
   created_at       TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
@@ -85,5 +85,5 @@ CREATE TABLE notion_references (
 );
 
 -- ivfflat indexes for fast vector similarity search
-CREATE INDEX chunks_embedding_idx ON chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
-CREATE INDEX long_term_memories_embedding_idx ON long_term_memories USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+CREATE INDEX chunks_embedding_idx ON chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 10);
+CREATE INDEX long_term_memories_embedding_idx ON long_term_memories USING ivfflat (embedding vector_cosine_ops) WITH (lists = 10);

@@ -7,11 +7,15 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "require": "./dist/index.js",
       "import": "./dist/index.js",
+      "default": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./logger": {
+      "require": "./dist/logger.js",
       "import": "./dist/logger.js",
+      "default": "./dist/logger.js",
       "types": "./dist/logger.d.ts"
     }
   },
