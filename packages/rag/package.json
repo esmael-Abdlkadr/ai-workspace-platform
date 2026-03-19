@@ -22,6 +22,7 @@
     "@langchain/textsplitters": "^1.0.1",
     "@workspace/db": "workspace:*",
     "cheerio": "^1.2.0",
+    "drizzle-orm": "^0.45.1",
     "openai": "^6.32.0",
     "pdf-parse": "^2.4.5",
     "zod": "^4.3.6"
