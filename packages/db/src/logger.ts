@@ -16,11 +16,7 @@ export const logger = pino(
   isDev
     ? pino.transport({
         target: 'pino-pretty',
-        options: {
-          colorize: true,
-          translateTime: 'SYS:standard',
-          ignore: 'pid,hostname',
-        },
+        options: { colorize: true, translateTime: 'SYS:standard', ignore: 'pid,hostname' },
       })
     : undefined,
 );
