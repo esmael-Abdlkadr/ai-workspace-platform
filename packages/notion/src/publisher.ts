@@ -10,8 +10,17 @@ export type PublishResult = {
   pageUrl: string;
 };
 
+function extractTitle(markdown: string, fallback: string): string {
+  const h1Match = markdown.match(/^#\s+(.+)$/m);
+  if (h1Match?.[1]) return h1Match[1].trim();
+  const firstLine = markdown.split('\n').find((l) => l.trim().length > 0);
+  if (firstLine) return firstLine.trim().slice(0, 100);
+  return fallback.slice(0, 100);
+}
+
 export class NotionPublisher {
-  async publish(title: string, markdown: string): Promise<PublishResult> {
+  async publish(prompt: string, markdown: string): Promise<PublishResult> {
+    const title = extractTitle(markdown, prompt);
     const client = getNotionClient();
     const databaseId = process.env['NOTION_DEFAULT_DATABASE_ID'];
     if (!databaseId) throw new Error('NOTION_DEFAULT_DATABASE_ID environment variable is required');

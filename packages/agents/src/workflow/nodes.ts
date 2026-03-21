@@ -24,10 +24,11 @@ export async function researcherNode(
 }
 
 export async function writerNode(state: WorkflowState): Promise<Partial<WorkflowState>> {
-  logger.info({ taskId: state.taskId, retryCount: state.retryCount }, 'Node: writer started');
+  const isRetry = state.criticFeedback !== null;
+  logger.info({ taskId: state.taskId, retryCount: state.retryCount, isRetry }, 'Node: writer started');
   await updateTask(state.taskId, { currentStep: 'writer' }).catch(() => undefined);
   try {
-    const context = state.criticFeedback
+    const context = isRetry
       ? `Research:\n${state.researchResult}\n\nPrevious feedback to address:\n${state.criticFeedback}`
       : (state.researchResult ?? '');
 
@@ -37,11 +38,11 @@ export async function writerNode(state: WorkflowState): Promise<Partial<Workflow
       context,
     });
     logger.info({ taskId: state.taskId }, 'Node: writer complete');
-    return { draftDocument: result.output, retryCount: state.retryCount + 1 };
+    return { draftDocument: result.output, retryCount: isRetry ? state.retryCount + 1 : state.retryCount };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     logger.error({ taskId: state.taskId, error: message }, 'Node: writer failed');
-    return { error: `Writer failed: ${message}`, retryCount: state.retryCount + 1 };
+    return { error: `Writer failed: ${message}` };
   }
 }
 
@@ -84,10 +85,7 @@ export async function memoryNode(state: WorkflowState): Promise<Partial<Workflow
 }
 
 export function errorNode(state: WorkflowState): Partial<WorkflowState> {
-  const reason =
-    state.retryCount >= MAX_RETRIES
-      ? `Max retries (${MAX_RETRIES}) exceeded`
-      : (state.error ?? 'Unknown error');
+  const reason = state.error ?? 'Unknown error';
   logger.error({ taskId: state.taskId, reason }, 'Node: error — workflow terminated');
   return { error: reason };
 }
@@ -96,7 +94,10 @@ export function routeAfterCritic(
   state: WorkflowState,
 ): 'writer' | 'memory' | 'error' {
   if (state.error) return 'error';
-  if (state.retryCount >= MAX_RETRIES) return 'error';
+  if (state.retryCount >= MAX_RETRIES) {
+    logger.warn({ taskId: state.taskId, criticScore: state.criticScore }, 'Max retries reached — accepting draft as final');
+    return 'memory';
+  }
   if ((state.criticScore ?? 0) < 7) return 'writer';
   return 'memory';
 }

@@ -3,12 +3,25 @@ import { embedTexts } from '@workspace/rag';
 import { AgentOutputSchema } from './types.js';
 import type { AgentInput, AgentOutput } from './types.js';
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/`{1,3}[^`]*`{1,3}/g, '')
+    .replace(/^[-*+]\s+/gm, '')
+    .replace(/^\d+\.\s+/gm, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\n{2,}/g, '\n')
+    .trim();
+}
+
 export async function memoryAgent(input: AgentInput): Promise<AgentOutput> {
   logger.info({ task: input.task, workspaceId: input.workspaceId }, 'MemoryAgent started');
 
   if (!input.context) throw new Error('MemoryAgent requires context (document to memorize)');
 
-  const summary = input.context.substring(0, 1000);
+  const summary = stripMarkdown(input.context).substring(0, 800);
 
   const [embedding] = await embedTexts([summary]);
   if (!embedding) throw new Error('MemoryAgent: embedding generation failed');
