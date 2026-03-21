@@ -81,6 +81,9 @@ importers:
       '@workspace/db':
         specifier: workspace:*
         version: link:../db
+      '@workspace/notion':
+        specifier: workspace:*
+        version: link:../notion
       '@workspace/rag':
         specifier: workspace:*
         version: link:../rag
@@ -129,9 +132,15 @@ importers:
 
   packages/notion:
     dependencies:
+      '@notionhq/client':
+        specifier: ^5.13.0
+        version: 5.13.0
       '@workspace/db':
         specifier: workspace:*
         version: link:../db
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
     devDependencies:
       typescript:
         specifier: ^5.5.4
@@ -1137,6 +1146,10 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
 
+  '@notionhq/client@5.13.0':
+    resolution: {integrity: sha512-SWVaqYVNaecLzAAllups4vklxxomaFenEMEkoUs3ylvhK1KFTU5Jevgu9Uwm/TSdhsErV0ru5YHcLd3SNyPi6Q==}
+    engines: {node: '>=18'}
+
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
@@ -1792,6 +1805,10 @@ packages:
 
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
+
+  dotenv@17.3.1:
+    resolution: {integrity: sha512-IO8C/dzEb6O3F9/twg6ZLXz164a2fhTnEWb95H23Dm4OuN+92NmEAlTrupP9VW6Jm3sO26tQlqyvyi4CsnY9GA==}
+    engines: {node: '>=12'}
 
   drizzle-kit@0.31.10:
     resolution: {integrity: sha512-7OZcmQUrdGI+DUNNsKBn1aW8qSoKuTH7d0mYgSP8bAzdFzKoovxEFnoGQp2dVs82EOJeYycqRtciopszwUf8bw==}
@@ -4098,6 +4115,8 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
+  '@notionhq/client@5.13.0': {}
+
   '@pinojs/redact@0.4.0': {}
 
   '@rtsao/scc@1.1.0': {}
@@ -4780,6 +4799,8 @@ snapshots:
       dom-serializer: 2.0.0
       domelementtype: 2.3.0
       domhandler: 5.0.3
+
+  dotenv@17.3.1: {}
 
   drizzle-kit@0.31.10:
     dependencies:

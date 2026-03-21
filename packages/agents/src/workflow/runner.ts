@@ -1,4 +1,5 @@
-import { logger, createTask, completeTask, failTask, updateTask, type Task } from '@workspace/db';
+import { logger, createTask, completeTask, failTask, updateTask, saveNotionReference, type Task } from '@workspace/db';
+import { NotionPublisher } from '@workspace/notion';
 import { compiledGraph } from './graph.js';
 import type { WorkflowState } from './state.js';
 
@@ -34,7 +35,20 @@ export class WorkflowRunner {
           { taskId: task.id, criticScore: finalState.criticScore, retryCount: finalState.retryCount },
           'WorkflowRunner complete',
         );
-        return completeTask(task.id, finalState.finalDocument);
+        const completedTask = await completeTask(task.id, finalState.finalDocument);
+
+        try {
+          const publisher = new NotionPublisher();
+          const { pageId, pageUrl } = await publisher.publish(prompt, finalState.finalDocument);
+          await saveNotionReference({ taskId: task.id, notionPageId: pageId, notionPageUrl: pageUrl });
+          await updateTask(task.id, { notionPageUrl: pageUrl });
+          logger.info({ taskId: task.id, pageUrl }, 'WorkflowRunner: Notion page published');
+        } catch (notionError) {
+          const message = notionError instanceof Error ? notionError.message : String(notionError);
+          logger.warn({ taskId: task.id, error: message }, 'WorkflowRunner: Notion publish failed (non-fatal)');
+        }
+
+        return completedTask;
       }
 
       const errorMsg = finalState.error ?? 'Workflow ended without a final document';
