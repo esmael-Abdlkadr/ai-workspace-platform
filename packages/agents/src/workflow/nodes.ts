@@ -1,4 +1,4 @@
-import { logger } from '@workspace/db';
+import { logger, updateTask } from '@workspace/db';
 import { researcherAgent } from '../researcher.js';
 import { writerAgent } from '../writer.js';
 import { criticAgent } from '../critic.js';
@@ -11,6 +11,7 @@ export async function researcherNode(
   state: WorkflowState,
 ): Promise<Partial<WorkflowState>> {
   logger.info({ taskId: state.taskId }, 'Node: researcher started');
+  await updateTask(state.taskId, { currentStep: 'researcher' }).catch(() => undefined);
   try {
     const result = await researcherAgent({ task: state.prompt, workspaceId: state.workspaceId });
     logger.info({ taskId: state.taskId }, 'Node: researcher complete');
@@ -24,6 +25,7 @@ export async function researcherNode(
 
 export async function writerNode(state: WorkflowState): Promise<Partial<WorkflowState>> {
   logger.info({ taskId: state.taskId, retryCount: state.retryCount }, 'Node: writer started');
+  await updateTask(state.taskId, { currentStep: 'writer' }).catch(() => undefined);
   try {
     const context = state.criticFeedback
       ? `Research:\n${state.researchResult}\n\nPrevious feedback to address:\n${state.criticFeedback}`
@@ -45,6 +47,7 @@ export async function writerNode(state: WorkflowState): Promise<Partial<Workflow
 
 export async function criticNode(state: WorkflowState): Promise<Partial<WorkflowState>> {
   logger.info({ taskId: state.taskId }, 'Node: critic started');
+  await updateTask(state.taskId, { currentStep: 'critic' }).catch(() => undefined);
   try {
     const result = await criticAgent({
       task: state.prompt,
@@ -64,6 +67,7 @@ export async function criticNode(state: WorkflowState): Promise<Partial<Workflow
 
 export async function memoryNode(state: WorkflowState): Promise<Partial<WorkflowState>> {
   logger.info({ taskId: state.taskId }, 'Node: memory started');
+  await updateTask(state.taskId, { currentStep: 'memory' }).catch(() => undefined);
   try {
     await memoryAgent({
       task: state.prompt,

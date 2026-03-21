@@ -9,6 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@workspace/agents": "workspace:*",
+    "@workspace/db": "workspace:*",
+    "@workspace/rag": "workspace:*",
     "next": "16.1.7",
     "react": "19.2.3",
     "react-dom": "19.2.3",

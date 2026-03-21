@@ -2,6 +2,7 @@ export { logger } from './logger.js';
 export type { Logger } from './logger.js';
 
 export { db, migrationClient } from './db.js';
+export { sql } from 'drizzle-orm';
 export type { Db } from './db.js';
 
 export * from './schema/index.js';

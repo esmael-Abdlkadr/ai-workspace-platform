@@ -4,8 +4,10 @@ import { compiledGraph } from './graph.js';
 import type { WorkflowState } from './state.js';
 
 export class WorkflowRunner {
-  async run(prompt: string, workspaceId: string): Promise<Task> {
-    const task = await createTask({ prompt, workspaceId, status: 'running' });
+  async run(prompt: string, workspaceId: string, existingTaskId?: string): Promise<Task> {
+    const task = existingTaskId
+      ? await updateTask(existingTaskId, { status: 'running' })
+      : await createTask({ prompt, workspaceId, status: 'running' });
     logger.info({ taskId: task.id, prompt }, 'WorkflowRunner started');
 
     const threadId = task.id;

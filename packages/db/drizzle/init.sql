@@ -47,6 +47,7 @@ CREATE TABLE tasks (
   status           task_status DEFAULT 'pending' NOT NULL,
   result           TEXT,
   langgraph_run_id TEXT,
+  current_step     TEXT,
   notion_page_url  TEXT,
   error_message    TEXT,
   created_at       TIMESTAMPTZ DEFAULT NOW() NOT NULL,

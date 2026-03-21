@@ -1,21 +1,17 @@
 import { z } from 'zod';
 
 const EnvSchema = z.object({
-  // OpenAI
-  OPENAI_API_KEY: z.string().min(1, 'OPENAI_API_KEY is required'),
+  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
 
-  // Supabase — public (safe for browser)
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url('NEXT_PUBLIC_SUPABASE_URL must be a valid URL'),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, 'NEXT_PUBLIC_SUPABASE_ANON_KEY is required'),
+  OLLAMA_BASE_URL: z.string().url('OLLAMA_BASE_URL must be a valid URL'),
+  OLLAMA_EMBEDDING_MODEL: z.string().min(1, 'OLLAMA_EMBEDDING_MODEL is required'),
 
-  // Supabase — private (server only)
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'SUPABASE_SERVICE_ROLE_KEY is required'),
+  GROQ_API_KEY: z.string().min(1, 'GROQ_API_KEY is required'),
+  GROQ_MODEL: z.string().min(1, 'GROQ_MODEL is required'),
 
-  // Notion
   NOTION_API_KEY: z.string().min(1, 'NOTION_API_KEY is required'),
   NOTION_DEFAULT_DATABASE_ID: z.string().min(1, 'NOTION_DEFAULT_DATABASE_ID is required'),
 
-  // App
   NEXT_PUBLIC_APP_URL: z.string().url('NEXT_PUBLIC_APP_URL must be a valid URL'),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 });

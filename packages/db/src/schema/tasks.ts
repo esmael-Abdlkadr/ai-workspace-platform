@@ -17,6 +17,7 @@ export const tasks = pgTable('tasks', {
   status: taskStatusEnum('status').default('pending').notNull(),
   result: text('result'),
   langgraphRunId: text('langgraph_run_id'),
+  currentStep: text('current_step'),
   notionPageUrl: text('notion_page_url'),
   errorMessage: text('error_message'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
