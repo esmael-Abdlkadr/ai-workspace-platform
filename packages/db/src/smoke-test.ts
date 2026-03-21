@@ -5,7 +5,7 @@ import { logger } from './logger.js';
 async function run(): Promise<void> {
   logger.info('Starting Phase 1 smoke test...');
 
-  const workspace = await createWorkspace({ name: 'Test Workspace' });
+  const workspace = await createWorkspace({ name: 'Test Workspace', userId: 'smoke-test-user' });
   logger.info({ id: workspace.id, name: workspace.name }, 'Created workspace');
 
   const fetched = await getWorkspace(workspace.id);

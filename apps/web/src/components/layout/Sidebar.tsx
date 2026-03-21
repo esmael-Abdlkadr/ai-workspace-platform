@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import { MessageSquare, ListTodo, FileText, Brain, Sparkles, Library } from 'lucide-react';
+import { MessageSquare, ListTodo, FileText, Brain, Sparkles, Library, LogOut, UserCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { signOut } from '@/lib/auth-client';
 
 const navItems = [
   { href: '/chat', label: 'Chat', icon: MessageSquare },
@@ -11,10 +13,28 @@ const navItems = [
   { href: '/outputs', label: 'Outputs', icon: Library },
   { href: '/documents', label: 'Documents', icon: FileText },
   { href: '/memory', label: 'Memory', icon: Brain },
+  { href: '/profile', label: 'Profile', icon: UserCircle },
 ];
 
-export function Sidebar() {
+type SidebarProps = {
+  user: { name: string; email: string; image: string | null };
+};
+
+export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/login');
+  };
+
+  const initials = user.name
+    .split(' ')
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
 
   return (
     <aside
@@ -62,9 +82,32 @@ export function Sidebar() {
       </nav>
 
       <div className="p-3" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-        <div className="rounded-lg p-3" style={{ background: 'var(--surface-2)' }}>
-          <p className="text-[11px] font-medium" style={{ color: 'var(--text-secondary)' }}>Multi-Agent Platform</p>
-          <p className="mt-0.5 text-[10px]" style={{ color: 'var(--text-muted)' }}>Powered by LangGraph + Groq</p>
+        <div className="rounded-xl p-3" style={{ background: 'var(--surface-2)' }}>
+          <div className="flex items-center gap-2.5">
+            <div
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+              style={{ background: 'linear-gradient(135deg, #7c6ff7, #a78bfa)' }}
+            >
+              {user.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={user.image} alt={user.name} className="h-8 w-8 rounded-full object-cover" />
+              ) : (
+                initials
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-medium" style={{ color: 'var(--text-primary)' }}>{user.name}</p>
+              <p className="truncate text-[10px]" style={{ color: 'var(--text-muted)' }}>{user.email}</p>
+            </div>
+            <button
+              onClick={handleSignOut}
+              title="Sign out"
+              className="shrink-0 rounded-lg p-1.5 transition-opacity hover:opacity-70"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              <LogOut size={13} />
+            </button>
+          </div>
         </div>
       </div>
     </aside>

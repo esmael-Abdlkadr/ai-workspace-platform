@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db } from '../db.js';
 import { workspaces, type NewWorkspace, type Workspace } from '../schema/workspaces.js';
 
@@ -13,8 +13,21 @@ export async function getWorkspace(id: string): Promise<Workspace | null> {
   return workspace ?? null;
 }
 
-export async function listWorkspaces(): Promise<Workspace[]> {
-  return db.select().from(workspaces).orderBy(workspaces.createdAt);
+export async function getWorkspaceByIdAndUser(id: string, userId: string): Promise<Workspace | null> {
+  const [workspace] = await db
+    .select()
+    .from(workspaces)
+    .where(and(eq(workspaces.id, id), eq(workspaces.userId, userId)))
+    .limit(1);
+  return workspace ?? null;
+}
+
+export async function listWorkspaces(userId: string): Promise<Workspace[]> {
+  return db
+    .select()
+    .from(workspaces)
+    .where(eq(workspaces.userId, userId))
+    .orderBy(workspaces.createdAt);
 }
 
 export async function updateWorkspace(

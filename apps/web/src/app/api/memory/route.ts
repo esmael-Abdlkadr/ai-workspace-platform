@@ -1,7 +1,9 @@
 import { z } from 'zod';
-import { searchLongTermMemory } from '@workspace/db';
+import { headers } from 'next/headers';
+import { searchLongTermMemory, getWorkspaceByIdAndUser } from '@workspace/db';
 import { embedTexts } from '@workspace/rag';
-import { ok, badRequest, serverError } from '@/lib/api-response';
+import { auth } from '@/lib/auth';
+import { ok, badRequest, unauthorized, forbidden, serverError } from '@/lib/api-response';
 
 const MemorySchema = z.object({
   query: z.string().min(1),
@@ -11,6 +13,9 @@ const MemorySchema = z.object({
 
 export async function GET(request: Request) {
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return unauthorized();
+
     const { searchParams } = new URL(request.url);
     const parsed = MemorySchema.safeParse({
       query: searchParams.get('query'),
@@ -20,6 +25,10 @@ export async function GET(request: Request) {
     if (!parsed.success) return badRequest(parsed.error.issues);
 
     const { query, workspaceId, limit } = parsed.data;
+
+    const workspace = await getWorkspaceByIdAndUser(workspaceId, session.user.id);
+    if (!workspace) return forbidden('Workspace not found or access denied');
+
     const [embedding] = await embedTexts([query]);
     if (!embedding) return serverError('Failed to embed query');
 

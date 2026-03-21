@@ -1,6 +1,9 @@
 import { z } from 'zod';
+import { headers } from 'next/headers';
+import { getWorkspaceByIdAndUser } from '@workspace/db';
 import { ingest } from '@workspace/rag';
-import { ok, badRequest, serverError } from '@/lib/api-response';
+import { auth } from '@/lib/auth';
+import { ok, badRequest, unauthorized, forbidden, serverError } from '@/lib/api-response';
 
 const IngestSchema = z.discriminatedUnion('type', [
   z.object({
@@ -19,13 +22,19 @@ const IngestSchema = z.discriminatedUnion('type', [
 
 export async function POST(request: Request) {
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return unauthorized();
+
     const body = await request.json();
     const parsed = IngestSchema.safeParse(body);
     if (!parsed.success) return badRequest(parsed.error.issues);
 
     const data = parsed.data;
-    const title = data.title ?? (data.type === 'url' ? data.url : data.content.slice(0, 80));
 
+    const workspace = await getWorkspaceByIdAndUser(data.workspaceId, session.user.id);
+    if (!workspace) return forbidden('Workspace not found or access denied');
+
+    const title = data.title ?? (data.type === 'url' ? data.url : data.content.slice(0, 80));
     const input =
       data.type === 'text'
         ? { workspaceId: data.workspaceId, title, type: 'text' as const, content: data.content }
