@@ -13,3 +13,5 @@ export * from './queries/chunks.js';
 export * from './queries/tasks.js';
 export * from './queries/memory.js';
 export * from './queries/notion.js';
+export * from './queries/conversations.js';
+export * from './queries/messages.js';

@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import { MessageSquare, ListTodo, FileText, Brain, Sparkles, Library, LogOut, UserCircle } from 'lucide-react';
+import { MessageSquare, ListTodo, FileText, Brain, Sparkles, Library, LogOut, UserCircle, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { signOut } from '@/lib/auth-client';
 
 const navItems = [
   { href: '/chat', label: 'Chat', icon: MessageSquare },
+  { href: '/rag-chat', label: 'RAG Chat', icon: BookOpen },
   { href: '/tasks', label: 'Tasks', icon: ListTodo },
   { href: '/outputs', label: 'Outputs', icon: Library },
   { href: '/documents', label: 'Documents', icon: FileText },

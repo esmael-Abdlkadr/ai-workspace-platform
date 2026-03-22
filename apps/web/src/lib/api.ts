@@ -39,6 +39,31 @@ export type Output = {
   createdAt: string;
 };
 
+export type Conversation = {
+  id: string;
+  workspaceId: string;
+  userId: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type MessageSource = {
+  documentTitle: string;
+  chunkText: string;
+  source: string;
+  score: number;
+};
+
+export type ChatMessage = {
+  id: string;
+  conversationId: string;
+  role: 'user' | 'assistant';
+  content: string;
+  sources: MessageSource[];
+  createdAt: string;
+};
+
 export type Memory = {
   id: string;
   workspaceId: string;
@@ -117,5 +142,24 @@ export const api = {
       fetch(`/api/outputs?workspaceId=${workspaceId}&limit=${limit}`).then(
         (r) => json<{ outputs: Output[] }>(r),
       ),
+  },
+
+  conversations: {
+    list: (workspaceId: string) =>
+      fetch(`/api/conversations?workspaceId=${workspaceId}`).then(
+        (r) => json<{ conversations: Conversation[] }>(r),
+      ),
+    create: (workspaceId: string) =>
+      fetch('/api/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ workspaceId }),
+      }).then((r) => json<{ conversation: Conversation }>(r)),
+    messages: {
+      list: (conversationId: string) =>
+        fetch(`/api/conversations/${conversationId}/messages`).then(
+          (r) => json<{ messages: ChatMessage[] }>(r),
+        ),
+    },
   },
 };

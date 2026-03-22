@@ -1,5 +1,7 @@
 export * from './auth.js';
 export * from './workspaces.js';
+export * from './conversations.js';
+export * from './messages.js';
 export * from './documents.js';
 export * from './chunks.js';
 export * from './tasks.js';

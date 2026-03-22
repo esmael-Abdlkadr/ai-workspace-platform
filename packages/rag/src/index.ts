@@ -13,3 +13,4 @@ export {
 
 export type { IngestionInput, IngestionResult, LoadedDocument, RawChunk } from './types.js';
 export type { RetrievedChunk, RetrievalResult } from './retrieval/types.js';
+export { rewriteQuery, buildChatMessages, generateConversationTitle } from './chat.js';
